@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send a note to          |
   | license@php.net so we can mail you a copy immediately.               |
   +----------------------------------------------------------------------+
-  | Author:                                                              |
+  | Author: Axel Etcheverry <axel@etcheverry.biz>                        |
   +----------------------------------------------------------------------+
 */
 
@@ -30,9 +30,7 @@
 #include "zend_interfaces.h"
 
 #include "ext/standard/info.h"
-#ifdef HAVE_SPL
 #include "ext/spl/spl_exceptions.h"
-#endif
 
 //ZEND_DECLARE_MODULE_GLOBALS(pimple)
 
@@ -159,6 +157,7 @@ PHP_MINIT_FUNCTION(pimple)
     INIT_CLASS_ENTRY(tmp_ce, "Pimple", pimple_functions);
 
     pimple_ce = zend_register_internal_class(&tmp_ce TSRMLS_CC);
+    zend_class_implements(pimple_ce TSRMLS_CC, 1, zend_ce_arrayaccess);
 
 	return SUCCESS;
 }
@@ -217,8 +216,6 @@ PHP_METHOD(Pimple, __construct) {
         return;
     }
 
-    zend_class_implements(pimple_ce TSRMLS_CC, 1, zend_ce_arrayaccess);
-
     if (ZEND_NUM_ARGS() == 0) {
         MAKE_STD_ZVAL(values);
         array_init(values);
@@ -264,21 +261,12 @@ PHP_METHOD(Pimple, offsetGet) {
     values = zend_read_property(pimple_ce, getThis(), ZEND_STRS("values")-1, 0 TSRMLS_CC);
 
     if (zend_hash_find(Z_ARRVAL_P(values), id, id_length + 1, (void**)&z_value) == FAILURE) {
-        #ifdef HAVE_SPL
         zend_throw_exception_ex(
             spl_ce_InvalidArgumentException,
             0 TSRMLS_CC, 
             "Identifier \"%s\" is not defined.", 
             id
         );
-        #else
-        zend_throw_exception_ex(
-            default_exception_ce,
-            0 TSRMLS_CC, 
-            "Identifier \"%s\" is not defined.", 
-            id
-        );
-        #endif
         return;
     }
 
@@ -400,21 +388,12 @@ PHP_METHOD(Pimple, raw) {
     values = zend_read_property(pimple_ce, getThis(), ZEND_STRS("values")-1, 0 TSRMLS_CC);
 
     if (zend_hash_find(Z_ARRVAL_P(values), id, id_length + 1, (void**)&z_value) == FAILURE) {
-        #ifdef HAVE_SPL
         zend_throw_exception_ex(
             spl_ce_InvalidArgumentException,
             0 TSRMLS_CC, 
             "Identifier \"%s\" is not defined.", 
             id
         );
-        #else
-        zend_throw_exception_ex(
-            default_exception_ce,
-            0 TSRMLS_CC, 
-            "Identifier \"%s\" is not defined.", 
-            id
-        );
-        #endif
         return;
     }
 
@@ -438,40 +417,22 @@ PHP_METHOD(Pimple, extend) {
     values = zend_read_property(pimple_ce, getThis(), ZEND_STRS("values")-1, 0 TSRMLS_CC);
 
     if (zend_hash_find(Z_ARRVAL_P(values), id, id_length + 1, (void**)&z_value) == FAILURE) {
-        #ifdef HAVE_SPL
         zend_throw_exception_ex(
             spl_ce_InvalidArgumentException,
             0 TSRMLS_CC, 
             "Identifier \"%s\" is not defined.", 
             id
         );
-        #else
-        zend_throw_exception_ex(
-            default_exception_ce,
-            0 TSRMLS_CC, 
-            "Identifier \"%s\" is not defined.", 
-            id
-        );
-        #endif
         return;
     }
 
     if (!zend_is_callable(*z_value, 0, NULL TSRMLS_CC)) {
-        #ifdef HAVE_SPL
         zend_throw_exception_ex(
             spl_ce_InvalidArgumentException,
             0 TSRMLS_CC, 
             "Identifier \"%s\" does not contain an object definition.", 
             id
         );
-        #else
-        zend_throw_exception_ex(
-            default_exception_ce,
-            0 TSRMLS_CC, 
-            "Identifier \"%s\" does not contain an object definition.", 
-            id
-        );
-        #endif
         return;
     }
 
