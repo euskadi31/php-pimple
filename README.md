@@ -1,4 +1,4 @@
-php-pimple
+php-pimple [![Build Status](https://travis-ci.org/euskadi31/php-pimple.png)](https://travis-ci.org/euskadi31/php-pimple)
 ==========
 
 A small PHP 5.3 dependency injection container (PHP extension)
