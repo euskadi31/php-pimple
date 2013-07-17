@@ -28,6 +28,7 @@
 
 #include "zend_exceptions.h"
 #include "zend_interfaces.h"
+#include "zend_closures.h"
 
 #include "ext/standard/info.h"
 #include "ext/spl/spl_exceptions.h"
@@ -332,9 +333,10 @@ PHP_METHOD(Pimple, offsetUnset) {
 /* {{{ PHP_METHOD
  */
 PHP_METHOD(Pimple, share) {
-    zval *callable;
+    zval *zcallable;
+    //zend_closure *closure;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &callable) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zcallable, zend_ce_closure) == FAILURE) {
         return;
     }
 
@@ -358,9 +360,9 @@ PHP_METHOD(Pimple, share) {
 /* {{{ PHP_METHOD
  */
 PHP_METHOD(Pimple, protect) {
-    zval *callable;
+    zval *zcallable;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "f", &callable) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "O", &zcallable, zend_ce_closure) == FAILURE) {
         return;
     }
 
@@ -406,11 +408,11 @@ PHP_METHOD(Pimple, raw) {
 PHP_METHOD(Pimple, extend) {
     char *id;
     int id_length;
-    zval *callable,
+    zval *zcallable,
          *values,
          **z_value;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sf", &id, &id_length, &callable) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &id, &id_length, &zcallable, zend_ce_closure) == FAILURE) {
         return;
     }
     
