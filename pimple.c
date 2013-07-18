@@ -271,7 +271,7 @@ PHP_METHOD(Pimple, offsetGet) {
         return;
     }
 
-    if (zend_is_callable(*z_value, 0, NULL TSRMLS_CC)) {
+    if (Z_TYPE_PP(z_value) != IS_STRING && zend_is_callable(*z_value, 0, NULL TSRMLS_CC)) {
         
         zval ***args;
         zval *retval_ptr;
