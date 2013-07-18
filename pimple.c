@@ -33,10 +33,13 @@
 #include "ext/standard/info.h"
 #include "ext/spl/spl_exceptions.h"
 
+#include "pimple_closure.h"
+
 //ZEND_DECLARE_MODULE_GLOBALS(pimple)
 
 
 static zend_class_entry *pimple_ce;
+static zend_class_entry *pimple_closure_ce;
 
 
 ZEND_BEGIN_ARG_INFO(arginfo_pimple_construct, 0)
@@ -80,6 +83,10 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO(arginfo_pimple_keys, 0)
 ZEND_END_ARG_INFO()
 
+ZEND_BEGIN_ARG_INFO(arginfo_pimple_closure_invoke, 0)
+    ZEND_ARG_INFO(0, c)
+ZEND_END_ARG_INFO()
+
 
 /* {{{ pimple_functions[]
  *
@@ -96,6 +103,8 @@ const zend_function_entry pimple_functions[] = {
     PHP_ME(Pimple, raw,             arginfo_pimple_raw,             ZEND_ACC_PUBLIC)
     PHP_ME(Pimple, extend,          arginfo_pimple_extend,          ZEND_ACC_PUBLIC)
     PHP_ME(Pimple, keys,            arginfo_pimple_keys,            ZEND_ACC_PUBLIC)
+
+    PHP_ME(PimpleClosure, __invoke, arginfo_pimple_offsetset, ZEND_ACC_PUBLIC)
     PHP_FE_END    /* Must be the last line in pimple_functions[] */
 };
 /* }}} */
@@ -159,6 +168,11 @@ PHP_MINIT_FUNCTION(pimple)
 
     pimple_ce = zend_register_internal_class(&tmp_ce TSRMLS_CC);
     zend_class_implements(pimple_ce TSRMLS_CC, 1, zend_ce_arrayaccess);
+
+
+    zend_class_entry tmp_closure_ce;
+    INIT_CLASS_ENTRY(tmp_closure_ce, "PimpleClosure", pimple_functions);
+    pimple_closure_ce = zend_register_internal_class(&tmp_closure_ce TSRMLS_CC);
 
     return SUCCESS;
 }
@@ -326,7 +340,7 @@ PHP_METHOD(Pimple, offsetUnset) {
     
     values = zend_read_property(pimple_ce, getThis(), ZEND_STRS("values")-1, 0 TSRMLS_CC);
 
-    zend_symtable_del(HASH_OF(values), id, id_length + 1);
+    zend_symtable_del(Z_ARRVAL_P(values), id, id_length + 1);
 }
 /* }}} */
 
@@ -464,18 +478,28 @@ PHP_METHOD(Pimple, keys) {
     /**
      * return array_keys($this->values);
      */
+    
+    //php_printf("Count: %d\n", zend_hash_num_elements(Z_ARRVAL_P(values)));
 
-    /*array_init_size(return_value, zend_hash_num_elements(Z_ARRVAL_P(values)));
+    array_init_size(return_value, zend_hash_num_elements(Z_ARRVAL_P(values)));
 
     zend_hash_internal_pointer_reset_ex(Z_ARRVAL_P(values), &pos);
-    while (zend_hash_get_current_data_ex(Z_ARRVAL_P(values), (void **)&entry, &pos) == SUCCESS) {
+    /*while (zend_hash_get_current_data_ex(Z_ARRVAL_P(values), (void **)&entry, &pos) == SUCCESS) {
 
-        //MAKE_STD_ZVAL(new_val);
-        zend_hash_get_current_key_zval_ex(Z_ARRVAL_P(values), new_val, &pos);
+        MAKE_STD_ZVAL(new_val);
+        zend_hash_get_current_key_zval_ex(Z_ARRVAL_P(values), &new_val, &pos);
         zend_hash_next_index_insert(Z_ARRVAL_P(return_value), &new_val, sizeof(zval *), NULL);
         
         zend_hash_move_forward_ex(Z_ARRVAL_P(values), &pos);
     }*/
+}
+/* }}} */
+
+
+/* {{{ PHP_METHOD
+ */
+PHP_METHOD(PimpleClosure, __invoke) {
+
 }
 /* }}} */
 

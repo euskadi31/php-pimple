@@ -55,6 +55,8 @@ PHP_METHOD(Pimple, raw);
 PHP_METHOD(Pimple, extend);
 PHP_METHOD(Pimple, keys);
 
+PHP_METHOD(PimpleClosure, __invoke);
+
 
 #ifdef ZTS
 #define PIMPLE_G(v) TSRMG(pimple_globals_id, zend_pimple_globals *, v)
