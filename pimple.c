@@ -33,8 +33,6 @@
 #include "ext/standard/info.h"
 #include "ext/spl/spl_exceptions.h"
 
-#include "pimple_closure.h"
-
 //ZEND_DECLARE_MODULE_GLOBALS(pimple)
 
 
