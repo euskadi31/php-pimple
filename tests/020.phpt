@@ -1,7 +1,5 @@
 --TEST--
 Test Keys
---SKIPIF--
-<?php die("Skip: not implemented.");
 --FILE--
 <?php
 
