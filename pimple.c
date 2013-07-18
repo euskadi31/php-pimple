@@ -96,7 +96,7 @@ const zend_function_entry pimple_functions[] = {
     PHP_ME(Pimple, raw,             arginfo_pimple_raw,             ZEND_ACC_PUBLIC)
     PHP_ME(Pimple, extend,          arginfo_pimple_extend,          ZEND_ACC_PUBLIC)
     PHP_ME(Pimple, keys,            arginfo_pimple_keys,            ZEND_ACC_PUBLIC)
-	PHP_FE_END	/* Must be the last line in pimple_functions[] */
+    PHP_FE_END    /* Must be the last line in pimple_functions[] */
 };
 /* }}} */
 
@@ -106,19 +106,19 @@ const zend_function_entry pimple_functions[] = {
  */
 zend_module_entry pimple_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
-	STANDARD_MODULE_HEADER,
+    STANDARD_MODULE_HEADER,
 #endif
-	"pimple",
-	pimple_functions,
-	PHP_MINIT(pimple),
-	PHP_MSHUTDOWN(pimple),
-	PHP_RINIT(pimple),		/* Replace with NULL if there's nothing to do at request start */
-	PHP_RSHUTDOWN(pimple),	/* Replace with NULL if there's nothing to do at request end */
-	PHP_MINFO(pimple),
+    "pimple",
+    pimple_functions,
+    PHP_MINIT(pimple),
+    PHP_MSHUTDOWN(pimple),
+    PHP_RINIT(pimple),        /* Replace with NULL if there's nothing to do at request start */
+    PHP_RSHUTDOWN(pimple),    /* Replace with NULL if there's nothing to do at request end */
+    PHP_MINFO(pimple),
 #if ZEND_MODULE_API_NO >= 20010901
-	PIMPLE_VERSION, /* Replace with version number for your extension */
+    PIMPLE_VERSION, /* Replace with version number for your extension */
 #endif
-	STANDARD_MODULE_PROPERTIES
+    STANDARD_MODULE_PROPERTIES
 };
 /* }}} */
 
@@ -141,8 +141,8 @@ PHP_INI_END()
 /* Uncomment this function if you have INI entries
 static void php_pimple_init_globals(zend_pimple_globals *pimple_globals)
 {
-	pimple_globals->global_value = 0;
-	pimple_globals->global_string = NULL;
+    pimple_globals->global_value = 0;
+    pimple_globals->global_string = NULL;
 }
 */
 /* }}} */
@@ -151,16 +151,16 @@ static void php_pimple_init_globals(zend_pimple_globals *pimple_globals)
  */
 PHP_MINIT_FUNCTION(pimple)
 {
-	/* If you have INI entries, uncomment these lines 
-	REGISTER_INI_ENTRIES();
-	*/
+    /* If you have INI entries, uncomment these lines 
+    REGISTER_INI_ENTRIES();
+    */
     zend_class_entry tmp_ce;
     INIT_CLASS_ENTRY(tmp_ce, "Pimple", pimple_functions);
 
     pimple_ce = zend_register_internal_class(&tmp_ce TSRMLS_CC);
     zend_class_implements(pimple_ce TSRMLS_CC, 1, zend_ce_arrayaccess);
 
-	return SUCCESS;
+    return SUCCESS;
 }
 /* }}} */
 
@@ -168,10 +168,10 @@ PHP_MINIT_FUNCTION(pimple)
  */
 PHP_MSHUTDOWN_FUNCTION(pimple)
 {
-	/* uncomment this line if you have INI entries
-	UNREGISTER_INI_ENTRIES();
-	*/
-	return SUCCESS;
+    /* uncomment this line if you have INI entries
+    UNREGISTER_INI_ENTRIES();
+    */
+    return SUCCESS;
 }
 /* }}} */
 
@@ -180,7 +180,7 @@ PHP_MSHUTDOWN_FUNCTION(pimple)
  */
 PHP_RINIT_FUNCTION(pimple)
 {
-	return SUCCESS;
+    return SUCCESS;
 }
 /* }}} */
 
@@ -189,7 +189,7 @@ PHP_RINIT_FUNCTION(pimple)
  */
 PHP_RSHUTDOWN_FUNCTION(pimple)
 {
-	return SUCCESS;
+    return SUCCESS;
 }
 /* }}} */
 
@@ -197,13 +197,13 @@ PHP_RSHUTDOWN_FUNCTION(pimple)
  */
 PHP_MINFO_FUNCTION(pimple)
 {
-	php_info_print_table_start();
-	php_info_print_table_header(2, "pimple support", "enabled");
-	php_info_print_table_end();
+    php_info_print_table_start();
+    php_info_print_table_header(2, "pimple support", "enabled");
+    php_info_print_table_end();
 
-	/* Remove comments if you have entries in php.ini
-	DISPLAY_INI_ENTRIES();
-	*/
+    /* Remove comments if you have entries in php.ini
+    DISPLAY_INI_ENTRIES();
+    */
 }
 /* }}} */
 
