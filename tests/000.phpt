@@ -7,6 +7,18 @@ Debug test
 
 class Service 
 {
+    protected $hash;
+
+    public function __construct()
+    {
+        $this->hash = md5(uniqid(''));
+    }
+
+    public function getHash()
+    {
+        return $this->hash;
+    }
+
     public function hello()
     {
         return "Hello";
@@ -37,8 +49,18 @@ $pimple['service'] = function($c) use ($func) {
 
     return $object;
 };
+/*
+$time_start = microtime(true);
 
-var_dump($pimple['service']->hello());
+for ($i = 0; $i < 100000; $i++) {
+    $pimple['service']->getHash();
+}
+$time_end = microtime(true);
+
+echo $time_end - $time_start . PHP_EOL;
+*/
+//var_dump($pimple['service']->getHash());
+//var_dump($pimple['service']->getHash());
 
 try {
     $pimple['foot'];
@@ -64,7 +86,6 @@ echo "Done" . PHP_EOL;
 
 ?>
 --EXPECT--
-string(5) "Hello"
 Try OK
 Catch OK
 Done
