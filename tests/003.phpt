@@ -1,5 +1,7 @@
 --TEST--
 Test With Closure
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

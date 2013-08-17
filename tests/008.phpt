@@ -1,5 +1,7 @@
 --TEST--
 Test Offset Get Validates Key Is Present
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

@@ -1,5 +1,7 @@
 --TEST--
 Test Offset Get Honors Null Values
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

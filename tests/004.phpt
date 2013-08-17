@@ -1,5 +1,7 @@
 --TEST--
 Test Services Should Be Different
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

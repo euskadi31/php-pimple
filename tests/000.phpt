@@ -5,6 +5,12 @@ Debug test
 --FILE--
 <?php 
 
+$pimple = new Pimple();
+
+$pimple['time'] = $pimple->share(function() {
+    return time();
+});
+
 class Service 
 {
     protected $hash;

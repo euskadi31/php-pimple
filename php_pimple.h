@@ -23,8 +23,6 @@
 
 #define PIMPLE_VERSION "1.0"
 
-extern ZEND_API zend_class_entry *pimple_closure_ce;
-
 extern zend_module_entry pimple_module_entry;
 #define phpext_pimple_ptr &pimple_module_entry
 
@@ -57,6 +55,7 @@ PHP_METHOD(Pimple, raw);
 PHP_METHOD(Pimple, extend);
 PHP_METHOD(Pimple, keys);
 
+PHP_METHOD(PimpleClosure, __construct);
 PHP_METHOD(PimpleClosure, __invoke);
 
 

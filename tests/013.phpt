@@ -1,5 +1,7 @@
 --TEST--
 Test Global Function Name As Parameter Value
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

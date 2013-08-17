@@ -1,5 +1,7 @@
 --TEST--
 Test Constructor Injection
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 $params = array(

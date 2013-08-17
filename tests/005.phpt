@@ -1,5 +1,7 @@
 --TEST--
 Test Should Pass Container As Parameter
+--SKIPIF--
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

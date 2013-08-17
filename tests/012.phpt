@@ -1,7 +1,7 @@
 --TEST--
 Test Protect
 --SKIPIF--
-<?php die("Skip: not implemented.");
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
 --FILE--
 <?php
 

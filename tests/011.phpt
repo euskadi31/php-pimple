@@ -1,7 +1,9 @@
 --TEST--
 Test Share
 --SKIPIF--
-<?php die("Skip: not implemented.");
+<?php if (!extension_loaded("pimple")) print "skip"; ?>
+--INI--
+memory_limit=512M
 --FILE--
 <?php
 
