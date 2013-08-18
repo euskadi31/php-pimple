@@ -153,12 +153,6 @@ zend_module_entry pimple_module_entry = {
 ZEND_GET_MODULE(pimple)
 #endif
 
-static int _zval_array_to_c_array(zval **arg, zval ****params TSRMLS_DC) /* {{{ */
-{
-    *(*params)++ = arg;
-    return ZEND_HASH_APPLY_KEEP;
-} /* }}} */
-
 /* {{{ PHP_INI
  */
 /* Remove comments and fill if you need to have entries in php.ini
@@ -252,7 +246,7 @@ PHP_MINFO_FUNCTION(pimple)
 /* {{{ PHP_METHOD
  */
 PHP_METHOD(Pimple, __construct) {
-    zval *values = NULL;
+    zval *values;
 
     // parse arguments
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|a", &values) == FAILURE) {
@@ -393,11 +387,11 @@ PHP_METHOD(Pimple, offsetUnset) {
  */
 PHP_METHOD(Pimple, share) {
     zval *zcallable,
-         *retval_ptr = NULL;
+         *retval_ptr;
 
     const char closure_name[] = "PimpleClosure";
     
-    zend_class_entry *ce = NULL,
+    zend_class_entry *ce,
                      *old_scope,
                      **pce;
 
@@ -420,28 +414,28 @@ PHP_METHOD(Pimple, share) {
         EG(scope) = old_scope;
 
         if (constructor) {
-            zval ***params = NULL;
+            zval ***params;
             zend_fcall_info fci;
             zend_fcall_info_cache fcc;
 
             params = safe_emalloc(sizeof(zval **), 1, 0);
             params[0] = &zcallable;
 
-            fci.size = sizeof(fci);
-            fci.function_table = EG(function_table);
-            fci.function_name = NULL;
-            fci.symbol_table = NULL;
-            fci.object_ptr = return_value;
-            fci.retval_ptr_ptr = &retval_ptr;
-            fci.param_count = 1;
-            fci.params = params;
-            fci.no_separation = 1;
+            fci.size            = sizeof(fci);
+            fci.function_table  = EG(function_table);
+            fci.function_name   = NULL;
+            fci.symbol_table    = NULL;
+            fci.object_ptr      = return_value;
+            fci.retval_ptr_ptr  = &retval_ptr;
+            fci.param_count     = 1;
+            fci.params          = params;
+            fci.no_separation   = 1;
 
-            fcc.initialized = 1;
-            fcc.function_handler = constructor;
-            fcc.calling_scope = EG(scope);
-            fcc.called_scope = Z_OBJCE_P(return_value);
-            fcc.object_ptr = return_value;
+            fcc.initialized         = 1;
+            fcc.function_handler    = constructor;
+            fcc.calling_scope       = EG(scope);
+            fcc.called_scope        = Z_OBJCE_P(return_value);
+            fcc.object_ptr          = return_value;
 
             // call PimpleClosure::__construct()
             if (zend_call_function(&fci, &fcc TSRMLS_CC) == FAILURE) {
@@ -449,9 +443,11 @@ PHP_METHOD(Pimple, share) {
                 if (params) {
                     efree(params);
                 }
+
                 if (retval_ptr) {
                     zval_ptr_dtor(&retval_ptr);
                 }
+
                 php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invocation of %s's constructor failed", ce->name);
                 zval_dtor(return_value);
                 RETURN_NULL();
@@ -474,7 +470,7 @@ PHP_METHOD(Pimple, share) {
 PHP_METHOD(Pimple, protect) {
 
     zval *zcallable,
-         *retval_ptr = NULL;
+         *retval_ptr;
     
     zval *is_protect;
     ALLOC_INIT_ZVAL(is_protect);
@@ -482,7 +478,7 @@ PHP_METHOD(Pimple, protect) {
 
     const char closure_name[] = "PimpleClosure";
     
-    zend_class_entry *ce = NULL,
+    zend_class_entry *ce,
                      *old_scope,
                      **pce;
 
@@ -505,7 +501,7 @@ PHP_METHOD(Pimple, protect) {
         EG(scope) = old_scope;
 
         if (constructor) {
-            zval ***params = NULL;
+            zval ***params;
             zend_fcall_info fci;
             zend_fcall_info_cache fcc;
 
@@ -513,30 +509,32 @@ PHP_METHOD(Pimple, protect) {
             params[0] = &zcallable;
             params[1] = &is_protect;
 
-            fci.size = sizeof(fci);
-            fci.function_table = EG(function_table);
-            fci.function_name = NULL;
-            fci.symbol_table = NULL;
-            fci.object_ptr = return_value;
-            fci.retval_ptr_ptr = &retval_ptr;
-            fci.param_count = 2;
-            fci.params = params;
-            fci.no_separation = 1;
+            fci.size            = sizeof(fci);
+            fci.function_table  = EG(function_table);
+            fci.function_name   = NULL;
+            fci.symbol_table    = NULL;
+            fci.object_ptr      = return_value;
+            fci.retval_ptr_ptr  = &retval_ptr;
+            fci.param_count     = 2;
+            fci.params          = params;
+            fci.no_separation   = 1;
 
-            fcc.initialized = 1;
-            fcc.function_handler = constructor;
-            fcc.calling_scope = EG(scope);
-            fcc.called_scope = Z_OBJCE_P(return_value);
-            fcc.object_ptr = return_value;
+            fcc.initialized         = 1;
+            fcc.function_handler    = constructor;
+            fcc.calling_scope       = EG(scope);
+            fcc.called_scope        = Z_OBJCE_P(return_value);
+            fcc.object_ptr          = return_value;
 
             if (zend_call_function(&fci, &fcc TSRMLS_CC) == FAILURE) {
 
                 if (params) {
                     efree(params);
                 }
+
                 if (retval_ptr) {
                     zval_ptr_dtor(&retval_ptr);
                 }
+
                 php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invocation of %s's constructor failed", ce->name);
                 zval_dtor(return_value);
                 RETURN_NULL();
@@ -595,28 +593,27 @@ PHP_METHOD(Pimple, extend) {
     zval *zcallable,
          *values,
          **z_value,
-         *retval_ptr;
-    
-    zval *is_protect;
-    ALLOC_INIT_ZVAL(is_protect);
-    ZVAL_LONG(is_protect, 0);
+         *retval_ptr,
+         *is_protect,
+         *zfactory,
+         *retvalue;
 
     const char closure_name[] = "PimpleClosure";
 
-    zend_class_entry *ce = NULL,
+    zend_class_entry *ce,
                      *old_scope,
                      **pce;
 
     zend_function *constructor;
-
-    zval *zfactory,
-         *retvalue;
 
     // parse arguments
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sO", &id, &id_length, &zcallable, zend_ce_closure) == FAILURE) {
         return;
     }
     
+    ALLOC_INIT_ZVAL(is_protect);
+    ZVAL_LONG(is_protect, 0);
+
     // read values property
     values = zend_read_property(pimple_ce, getThis(), ZEND_STRS("values")-1, 0 TSRMLS_CC);
 
@@ -633,16 +630,20 @@ PHP_METHOD(Pimple, extend) {
 
     // check if z_value is callable
     if (Z_TYPE_PP(z_value) != IS_STRING && zend_is_callable(*z_value, IS_CALLABLE_STRICT, NULL TSRMLS_CC)) {
-        
+
         zval ***args;
         //zval *retval_ptr;
 
-        args = safe_emalloc(sizeof(zval **), 1, 0);
+        args = safe_emalloc(sizeof(zval **), 2, 0);
         args[0] = &(getThis());
+        args[1] = &is_protect;
 
         // call callable function
         if (call_user_function_ex(EG(function_table), NULL, *z_value, &zfactory, 1, args, 0, NULL TSRMLS_CC) == FAILURE) {
             // error
+            php_error_docref(NULL TSRMLS_CC, E_WARNING, "Invocation of Closure::__invoke failed");
+            zval_dtor(zfactory);
+            RETURN_NULL();
         }
         efree(args);
 
@@ -668,7 +669,7 @@ PHP_METHOD(Pimple, extend) {
         EG(scope) = old_scope;
 
         if (constructor) {
-            zval ***params = NULL;
+            zval ***params;
             zend_fcall_info fci;
             zend_fcall_info_cache fcc;
 
@@ -677,21 +678,21 @@ PHP_METHOD(Pimple, extend) {
             params[1] = &is_protect;
             params[2] = &zfactory;
 
-            fci.size = sizeof(fci);
-            fci.function_table = EG(function_table);
-            fci.function_name = NULL;
-            fci.symbol_table = NULL;
-            fci.object_ptr = retvalue;
-            fci.retval_ptr_ptr = &retval_ptr;
-            fci.param_count = 3;
-            fci.params = params;
-            fci.no_separation = 1;
+            fci.size            = sizeof(fci);
+            fci.function_table  = EG(function_table);
+            fci.function_name   = NULL;
+            fci.symbol_table    = NULL;
+            fci.object_ptr      = retvalue;
+            fci.retval_ptr_ptr  = &retval_ptr;
+            fci.param_count     = 3;
+            fci.params          = params;
+            fci.no_separation   = 1;
 
-            fcc.initialized = 1;
-            fcc.function_handler = constructor;
-            fcc.calling_scope = EG(scope);
-            fcc.called_scope = Z_OBJCE_P(retvalue);
-            fcc.object_ptr = retvalue;
+            fcc.initialized         = 1;
+            fcc.function_handler    = constructor;
+            fcc.calling_scope       = EG(scope);
+            fcc.called_scope        = Z_OBJCE_P(retvalue);
+            fcc.object_ptr          = retvalue;
 
             // call PimpleClosure::__construct()
             if (zend_call_function(&fci, &fcc TSRMLS_CC) == FAILURE) {
@@ -828,13 +829,12 @@ ZEND_METHOD(PimpleClosure, __invoke) {
 
     // check if protect
     if (Z_LVAL_P(is_protect) == 1) {
-
         zcallback = zend_read_property(pimple_closure_ce, getThis(), ZEND_STRS("callback")-1, 0 TSRMLS_CC);
         RETVAL_ZVAL(zcallback, 0, 0);
 
     //} else if (Z_TYPE_P(zfactory) == IS_OBJECT || Z_TYPE_P(zfactory) == IS_CALLABLE) {
-    } else if (Z_TYPE_P(zfactory) != IS_STRING && zend_is_callable(zfactory, IS_CALLABLE_STRICT, NULL TSRMLS_CC)) {
-        php_printf("zfactory\n");
+    } else if (Z_TYPE_P(zfactory) != IS_NULL) {
+    //} else if (Z_TYPE_P(zfactory) != IS_STRING && zend_is_callable(zfactory, IS_CALLABLE_STRICT, NULL TSRMLS_CC)) {
         zval ***factory_args;
         zval *zfactory_value,
              *object;
@@ -866,7 +866,6 @@ ZEND_METHOD(PimpleClosure, __invoke) {
         RETURN_ZVAL(object, 0, 0);
 
     } else {
-        
         static zval *object = NULL;
 
         if (object == NULL) {
